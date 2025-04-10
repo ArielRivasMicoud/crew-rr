@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Add Plotly.js for visualizations -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --light-bg: #f9f9f9;
+            --dark-bg: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            background-image: url('{{ header_image }}');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1;
+        }
+        
+        header h1, header p {
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            color: white;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--primary-color);
+            margin-top: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        
+        p {
+            margin-bottom: 20px;
+        }
+        
+        .meta {
+            font-style: italic;
+            color: #777;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .graph-container {
+            margin: 40px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .graph-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .image-container {
+            width: 300px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+        
+        .image-caption {
+            padding: 10px;
+            background-color: white;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subsections {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .subsection {
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .subsection h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .subsection p {
+            margin: 0;
+            color: #444;
+            line-height: 1.5;
+        }
+        
+        /* For container sections like Key Findings and Detailed Analysis */
+        .section.container-section h2 {
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .section.container-section h2:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background-color: var(--dark-bg);
+            color: white;
+        }
+        
+        blockquote {
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 20px;
+            margin-left: 0;
+            font-style: italic;
+            color: #555;
+        }
+        
+        ul, ol {
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            background-color: #fffde7;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .key-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            width: 22%;
+            min-width: 200px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+        }
+        
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--accent-color);
+        }
+        
+        .stat-card small {
+            color: #777;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .stat-card {
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            .image-container {
+                width: 100%;
+            }
+            
+            .subsections {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Visualization section styling */
+        .visualization-section {
+            background: var(--light-bg-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .visualization-suggestions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        @media (min-width: 992px) {
+            .visualization-suggestions {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .visualization-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+        
+        .visualization-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .visualization-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .viz-description {
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ title }}</h1>
+        <p>Comprehensive Research Report</p>
+    </header>
+    
+    <div class="container">
+        <div class="meta">
+            <p>Generated on: {{ generation_date }}</p>
+        </div>
+        
+        <!-- Key Statistics -->
+        {% if key_stats %}
+        <div class="section">
+            <h2>Key Statistics</h2>
+            <div class="key-stats">
+                {% for stat in key_stats %}
+                <div class="stat-card">
+                    <h3>{{ stat.title }}</h3>
+                    <p>{{ stat.value }}</p>
+                    <small>{{ stat.description }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Relevant Images Gallery -->
+        {% if images %}
+        <div class="section">
+            <h2>Visual Insights</h2>
+            <div class="image-gallery">
+                {% for image in images %}
+                <div class="image-container">
+                    <img src="{{ image.url }}" alt="{{ image.alt }}">
+                    <div class="image-caption">{{ image.caption }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Main Content Sections -->
+        {% for section in sections %}
+        <div class="section {% if section.class %}{{ section.class }}{% endif %}">
+            <h2>{{ section.title }}</h2>
+            {{ section.content | safe }}
+        </div>
+        {% endfor %}
+        
+    </div>
+    
+    <footer>
+        <p>Generated by CrewAI Research and Reporting Application</p>
+    </footer>
+    
+    <!-- Add JavaScript for Plotly graphs -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all Plotly graphs
+            {% for graph in graphs %}
+                {{ graph.js_code | safe }}
+            {% endfor %}
+        });
+    </script>
+</body>
+</html> 
